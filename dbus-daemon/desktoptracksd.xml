@@ -1,0 +1,10 @@
+
+<node name="/org/kassoulet/DesktopTracks">
+	<interface name="org.kassoulet.DesktopTracks">
+		<annotation name="org.freedesktop.DBus.GLib.CSymbol" value="desktoptracks"/>
+		<method name="getStats">
+			<annotation name="org.freedesktop.DBus.GLib.CSymbol" value="desktoptracks_get_stats"/>
+			<arg type="s" name="stats" direction="out" />
+		</method>
+	</interface>
+</node>
