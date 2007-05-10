@@ -1,7 +1,9 @@
 /***************************************************************************
- *  desktoptracksd.h
+ *  appstats.h
  *  Author:  Gautier Portet <kassoulet gmail com>
  *  Copyright (C) 2007 Gautier Portet
+ * 
+ *  Get focused applications, and manage the statistics
  ****************************************************************************/
 
 /*
@@ -20,27 +22,27 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef _DESKTOPTRACKSD_H
-#define _DESKTOPTRACKSD_H
 
-typedef struct
+typedef struct 
 {
-	GObject parent;
-	DBusGConnection *connection;
-} DesktopTracks;
+	GString* app_name;
+	guint app_time;
+} AppStats;
 
-typedef struct
-{
-	GObjectClass parent_class;
-} DesktopTracksClass;
+void appstats_free(GArray* appstats);
 
-static void desktoptracks_init(DesktopTracks *server);
-static void desktoptracks_class_init(DesktopTracksClass *class);
+void stats_init();
+void stats_free();
+void stats_save();
+void stats_load();
 
-gboolean desktoptracks_get_stats(DesktopTracks *obj, gchar **stats, GError **error);
-gboolean desktoptracks_get_app_stats(DesktopTracks *obj, GPtrArray **stats_data, GError **error);
+GArray* stats_get_apps();
+
+void stats_update(gint seconds);
+
+//void stats_free();
+void stats_increase_application_time(const gchar* app_name, gint seconds);
+void stats_increase_idle_time(gint seconds);
 
 
 
-
-#endif
