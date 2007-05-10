@@ -1,3 +1,28 @@
+/***************************************************************************
+ *  appstats.c
+ *  Author:  Gautier Portet <kassoulet gmail com>
+ *  Copyright (C) 2007 Gautier Portet
+ * 
+ *  Get focused applications, and manage the statistics
+ ****************************************************************************/
+
+/*
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <stdlib.h>
@@ -6,6 +31,8 @@
 #include <string.h>
 
 #include <glib.h>
+
+#include "appstats.h"
 
 Display *display;
 
@@ -211,24 +238,53 @@ void stats_load()
 	}
 }
 
-GString* stats_get()
+
+void appstats_free(GArray* appstats)
 {
+	guint i;
+	
+	for(i=0; i< appstats->len; i++) {
+		g_string_free( 
+			g_array_index(appstats, AppStats*, i)->app_name
+			, TRUE);
+	}
+	g_array_free(appstats, TRUE);
+}
+
+GArray* stats_get_apps()
+{
+	GArray* array;
 	GString* str = NULL;
 	
 	gchar** apps;
 	GError* error;
 	
-	apps = g_key_file_get_keys(keyfile, "apps", NULL, &error);
+	array = g_array_new(TRUE, TRUE, sizeof (GString*));
+	
+	gsize app_count;
+	apps = g_key_file_get_keys(keyfile, "apps", &app_count, &error);
+	
+	AppStats* stats;	
+	
 	if (apps && *apps) {
-		str = g_string_new(NULL);
+
 		while (*apps) {
-			g_string_append_printf(str, "%s\t%d\n", *apps, stats_get_application_time(*apps));
+		
+			stats = g_new0(AppStats, 1);
+		
+			stats->app_name = g_string_new(*apps);
+			stats->app_time = stats_get_application_time(*apps);
+
+			//printf("stats_get: %s (%d)\n", stats->app_name->str, stats->app_time);
+
+			g_array_append_val(array, stats);
+
 			apps++;
 		}
 		
 	}
 	
-	return str;
+	return array;
 }
 
 

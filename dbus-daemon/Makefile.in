@@ -40,7 +40,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
@@ -165,7 +165,7 @@ target_os = @target_os@
 target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-INCLUDES = @DBUSGLIB_CFLAGS@ @X11_CFLAGS@ -fPIC -Wall -O0
+INCLUDES = @DBUSGLIB_CFLAGS@ @X11_CFLAGS@ -fPIC
 desktoptracksd_SOURCES = desktoptracksd.c appstats.c
 desktoptracksd_LDADD = @DBUSGLIB_LIBS@ @X11_LIBS@
 BUILT_SOURCES = desktoptracksd-dbus-glue.h
@@ -185,9 +185,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  dbus-daemon/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  dbus-daemon/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  dbus-daemon/Makefile
+	  $(AUTOMAKE) --foreign  dbus-daemon/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
