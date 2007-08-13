@@ -1,1 +1,1 @@
-SUBDIRS = dbus-daemon frontend
+SUBDIRS = daemon frontend

@@ -2,7 +2,7 @@ ENV_CFLAGS=$CFLAGS
 
 AC_PREREQ(2.59)
 AC_INIT([desktoptracksd], 0.1, [kassoulet@gmail.com], desktoptracksd)
-AC_CONFIG_SRCDIR([dbus-daemon/desktoptracksd.c])
+AC_CONFIG_SRCDIR([daemon/desktoptracksd.c])
 AC_LANG(C)
 AM_CONFIG_HEADER(config.h)
 AC_CANONICAL_SYSTEM
@@ -39,7 +39,7 @@ fi
 dnl ==========================================================================
 
 AC_OUTPUT([
-dbus-daemon/Makefile
+daemon/Makefile
 frontend/Makefile
 Makefile
 ])
