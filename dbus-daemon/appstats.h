@@ -35,6 +35,7 @@ void stats_init();
 void stats_free();
 void stats_save();
 void stats_load();
+void stats_clear();
 
 GArray* stats_get_apps();
 

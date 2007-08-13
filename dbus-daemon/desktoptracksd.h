@@ -39,6 +39,7 @@ static void desktoptracks_class_init(DesktopTracksClass *class);
 
 gboolean desktoptracks_get_stats(DesktopTracks *obj, gchar **stats, GError **error);
 gboolean desktoptracks_get_app_stats(DesktopTracks *obj, GPtrArray **stats_data, GError **error);
+gboolean desktoptracks_clear_stats(DesktopTracks *obj, GError **error);
 
 
 

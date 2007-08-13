@@ -39,7 +39,7 @@
 G_DEFINE_TYPE(DesktopTracks, desktoptracks, G_TYPE_OBJECT);
 
 gint update_time = 0;
-#define update_save = (60 *10) 
+#define UPDATE_SAVE (60 *10) 
 
 void desktoptracks_class_init(DesktopTracksClass *class) 
 {
@@ -102,8 +102,6 @@ static void add_application_time(GPtrArray *array, const gchar *app_name, guint 
 
 gboolean desktoptracks_get_app_stats(DesktopTracks *obj, GPtrArray **stats_data, GError **error)
 {
-	g_print("DesktopTracks::getAppStats().\n");
-	
 	g_return_val_if_fail (obj != NULL, FALSE);
 	g_return_val_if_fail (stats_data != NULL, FALSE);
 	
@@ -118,13 +116,20 @@ gboolean desktoptracks_get_app_stats(DesktopTracks *obj, GPtrArray **stats_data,
 	{
 		AppStats *stats;
 		stats = g_array_index(appstats, AppStats*, i);
-		
-		//printf("getAppStats: %s %d\n", stats->app_name->str, stats->app_time);
 		add_application_time (*stats_data, stats->app_name->str, stats->app_time);
 	}
 
 	appstats_free(appstats);
 
+	return TRUE;
+}
+
+gboolean desktoptracks_clear_stats(DesktopTracks *obj, GError **error)
+{
+	g_return_val_if_fail (obj != NULL, FALSE);
+	
+	stats_clear();
+	
 	return TRUE;
 }
 
@@ -135,7 +140,7 @@ gboolean update(gpointer data)
 	
 	update_time += 1;
 	
-	if (update_time > update_save) {
+	if (update_time > UPDATE_SAVE) {
 		update_time = 0;
 		stats_save();
 	}

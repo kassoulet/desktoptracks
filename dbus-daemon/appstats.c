@@ -39,8 +39,18 @@ Display *display;
 static unsigned char xerror;
 static int (*old_handler) (Display *, XErrorEvent *);
 
+#define STATS_FILENAME "desktoptracks.stats"
 
-#define STATS_FILE "desktoptracks.stats"
+gchar* stats_file = NULL;
+
+/* TODO: add here the other desktop windows */
+const char* window_blacklist[16] = {
+	"desktop_window", /* nautilus */
+	"desktoptracks",  /* our frontend */
+	NULL };
+
+
+/*********************************************************************/
 
 int xerror_handler(Display * d, XErrorEvent * ev)
 {
@@ -60,7 +70,6 @@ static int remove_trap()
 	return xerror;
 }
 
-//#define MAX 500
 GString* get_focused_application()
 {
 	Window wx;
@@ -104,6 +113,9 @@ GString* get_focused_application()
 		// last XFetchName succeeded
 		//printf("%x -> %s\n", wx, n);
 		XFree(n);
+	} else {
+		// XFetchName failed!
+		return NULL;
 	}
 
 	int status;
@@ -112,14 +124,22 @@ GString* get_focused_application()
 	GString* str = NULL;
 
 	status = XGetClassHint(display, w, &class_hints_return);
-/*	printf("name: '%s' class: '%s' (%d)\n",
+	if (!status) {
+		return NULL;
+	}
+	/*printf("name: '%s' class: '%s' (%d)\n",
 	       class_hints_return.res_name,
-	       class_hints_return.res_class, status); */
-	if (strcmp(class_hints_return.res_name, "desktop_window") != 0) {
-		// Not the desktop window
-		//strcpy(name, class_hints_return.res_class);
-
-		// TODO: also remove the frontend window
+	       class_hints_return.res_class, status);*/
+	       
+	char **blacklisted;
+	
+	for (blacklisted = (char**)window_blacklist; *blacklisted; blacklisted++) {
+		if (strcasecmp(class_hints_return.res_name, *blacklisted) == 0) {
+			break;
+		}
+	}
+	
+	if (! *blacklisted) {
 		str = g_string_new(class_hints_return.res_class);
 	}
 
@@ -135,18 +155,23 @@ GKeyFile* keyfile = NULL;
 
 void stats_init()
 {
-	g_print("connecting to display %s\n", XDisplayName(0));
+	const gchar* userdir;
 	
 	if (!(display = XOpenDisplay(0))) {
 		fprintf(stderr, "can't open display %s\n", XDisplayName(0));
 		exit(1);
 	}
-
+	g_print("connected to display %s\n", XDisplayName(0));
+	
 	keyfile = g_key_file_new();
+	
+	userdir = g_get_user_config_dir();
+	stats_file = g_build_filename(userdir, STATS_FILENAME, NULL);
 }
 
 void stats_free()
 {
+	g_free(stats_file);
 	g_key_file_free(keyfile);
 	XCloseDisplay(display);
 }
@@ -155,10 +180,10 @@ static gint stats_get_application_time(const gchar* app_name)
 {
 	GError* error = NULL;
 	gint seconds;
-	
 	seconds = g_key_file_get_integer(keyfile, "apps", app_name, &error);
 	if ( error != NULL) {
 		seconds = 0;
+		g_print("new application: '%s'\n", app_name);
 	}
 	return seconds;
 }
@@ -213,31 +238,42 @@ void stats_update(gint seconds)
 
 void stats_save()
 {
-	gchar* filename;
 	gchar* contents;
 
-	contents = g_key_file_to_data(keyfile, NULL, NULL);
-	filename = g_build_filename(g_get_user_config_dir(), STATS_FILE, NULL);
+	gsize size;
+	GError *error;
+	contents = g_key_file_to_data(keyfile, &size, &error);
 	
 	// TODO: error checking
-	g_file_set_contents(filename, contents, -1, NULL);
+	if (! g_file_set_contents(stats_file, contents, -1, NULL)) {
+		g_print("error while writing '%s'\n", stats_file);
+	}
 
-	//g_print("stats written in '%s'\n", filename);
-
-	g_free(filename);
 	g_free(contents);
 }
 
 void stats_load()
 {
-	gchar* filename;
-	
-	filename = g_build_filename(g_get_user_config_dir(), STATS_FILE, NULL);
-	if (! g_key_file_load_from_file(keyfile, filename,  G_KEY_FILE_NONE, NULL) ) {
-		fprintf(stderr, "can't load stats file '%s'\n", filename);
+	if (! g_key_file_load_from_file(keyfile, stats_file,  G_KEY_FILE_NONE, NULL) ) {
+		fprintf(stderr, "can't load stats file '%s'\n", stats_file);
 	}
 }
 
+void stats_clear()
+{
+	// TODO: merge to old stats
+	gulong size = strlen(stats_file) + 10;
+	gchar* backup = g_new(gchar, size);
+
+	g_snprintf(backup, size, "%s%s",stats_file,".bak");
+	
+	g_rename(stats_file, backup);
+	g_free(backup);
+	
+	g_key_file_free(keyfile);
+	keyfile = g_key_file_new();
+	stats_save();
+}
 
 void appstats_free(GArray* appstats)
 {
@@ -254,17 +290,17 @@ void appstats_free(GArray* appstats)
 GArray* stats_get_apps()
 {
 	GArray* array;
-	GString* str = NULL;
+	//GString* str = NULL;
 	
-	gchar** apps;
+	gchar** apps, **_apps;
 	GError* error;
 	
 	array = g_array_new(TRUE, TRUE, sizeof (GString*));
 	
 	gsize app_count;
-	apps = g_key_file_get_keys(keyfile, "apps", &app_count, &error);
+	apps = _apps = g_key_file_get_keys(keyfile, "apps", &app_count, NULL);
 	
-	AppStats* stats;	
+	AppStats* stats;
 	
 	if (apps && *apps) {
 
@@ -274,14 +310,11 @@ GArray* stats_get_apps()
 		
 			stats->app_name = g_string_new(*apps);
 			stats->app_time = stats_get_application_time(*apps);
-
-			//printf("stats_get: %s (%d)\n", stats->app_name->str, stats->app_time);
-
 			g_array_append_val(array, stats);
 
 			apps++;
 		}
-		
+		g_strfreev(_apps);
 	}
 	
 	return array;
