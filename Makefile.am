@@ -1,1 +1,1 @@
-SUBDIRS = daemon frontend
+SUBDIRS = daemon frontend data
