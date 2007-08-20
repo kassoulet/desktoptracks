@@ -482,6 +482,7 @@
   <property name="comments" translatable="yes">stats big browser</property>
   <property name="wrap_license">False</property>
   <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
+  <property name="logo">desktoptracks</property>
   <signal name="close" handler="gtk_widget_hide" last_modification_time="Thu, 09 Aug 2007 22:52:35 GMT"/>
 </widget>
 

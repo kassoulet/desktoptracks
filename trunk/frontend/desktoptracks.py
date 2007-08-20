@@ -145,6 +145,7 @@ chart_colors = [hex_to_rgb(c) for c in chart_colors]
 border_colors = [hex_to_rgb(c) for c in border_colors]
 hover_colors = [hex_to_rgb(c) for c in hover_colors]
 outline_color = hex_to_rgb(TANGO_COLOR_ALUMINIUM1_DARK)
+border_color = hex_to_rgb(TANGO_COLOR_ALUMINIUM1_LIGHT)
 
 def seconds_for_display(secs):
 	d = (
@@ -288,11 +289,12 @@ class PieChart(gtk.DrawingArea):
 			context.set_source_rgb( r,g,b )
 			context.fill_preserve()
 			r,g,b = border_colors[0]
-			
+			r,g,b = border_color
 			context.set_source_rgb( r,g,b )
 			if alone:
 				context.set_source_rgba( r,g,b,0 )
 				
+			context.set_line_width(3)
 			context.stroke()
 			
 			context.restore()
