@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=No name
+_Name=DesktopTracks
+_GenericName=Desktop Applications Stats
+_Comment=
+Icon=desktoptracks
+MimeType=
+Exec=desktoptracks
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=GNOME;GTK
+GenericName[en_US]=
