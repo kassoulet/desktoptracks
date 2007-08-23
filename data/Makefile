@@ -18,9 +18,9 @@
 #	sed -e s!48px!192px! < $< > $@
 
 
-pkgdatadir = $(datadir)/desktoptracksd
-pkglibdir = $(libdir)/desktoptracksd
-pkgincludedir = $(includedir)/desktoptracksd
+pkgdatadir = $(datadir)/desktoptracks
+pkglibdir = $(libdir)/desktoptracks
+pkgincludedir = $(includedir)/desktoptracks
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 install_sh_DATA = $(install_sh) -c -m 644
 install_sh_PROGRAM = $(install_sh) -c
@@ -69,7 +69,7 @@ AUTOMAKE = ${SHELL} /home/gautier/code/desktoptracks/missing --run automake-1.10
 AWK = mawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -O2 -march=nocona -pipe  -Wall
+CFLAGS = -O2 -march=nocona -pipe  -Wall -g -O0
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
@@ -85,6 +85,8 @@ ECHO_T =
 EGREP = /bin/grep -E
 EXEEXT = 
 GREP = /bin/grep
+GTK_CFLAGS = -DPNG_NO_MMX_CODE -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/freetype2 -I/usr/include/libpng12  
+GTK_LIBS = -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgdk_pixbuf-2.0 -lm -lpangocairo-1.0 -lfontconfig -lXext -lXrender -lXinerama -lXi -lXrandr -lXcursor -lXcomposite -lXdamage -lpango-1.0 -lcairo -lX11 -lXfixes -lgobject-2.0 -lgmodule-2.0 -ldl -lglib-2.0  
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
@@ -92,16 +94,16 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
-LIBS = 
+LIBS =  -g
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /home/gautier/code/desktoptracks/missing --run makeinfo
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
-PACKAGE = desktoptracksd
+PACKAGE = desktoptracks
 PACKAGE_BUGREPORT = kassoulet@gmail.com
-PACKAGE_NAME = desktoptracksd
-PACKAGE_STRING = desktoptracksd 0.1.0
-PACKAGE_TARNAME = desktoptracksd
+PACKAGE_NAME = desktoptracks
+PACKAGE_STRING = desktoptracks 0.1.0
+PACKAGE_TARNAME = desktoptracks
 PACKAGE_VERSION = 0.1.0
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
@@ -165,7 +167,7 @@ target_vendor = unknown
 top_builddir = ..
 top_srcdir = ..
 logodir = $(datadir)/desktoptracks
-dist_logo_DATA = desktoptracks.svg
+dist_logo_DATA = desktoptracks.svg desktoptracks-status.png
 icondir = $(datadir)/icons/hicolor/48x48/apps
 dist_icon_DATA = desktoptracks.png
 svgicondir = $(datadir)/icons/hicolor/scalable/apps

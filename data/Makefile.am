@@ -4,7 +4,7 @@
 #	sed -e s!48px!192px! < $< > $@
 
 logodir = $(datadir)/desktoptracks
-dist_logo_DATA = desktoptracks.svg
+dist_logo_DATA = desktoptracks.svg desktoptracks-status.png
 
 icondir = $(datadir)/icons/hicolor/48x48/apps
 dist_icon_DATA = desktoptracks.png

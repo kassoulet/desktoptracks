@@ -1,14 +1,14 @@
 
 
-#bin_PROGRAMS = desktoptracks
-
-#desktoptracks_SOURCES = desktoptracks.py
-
 appdir = $(bindir)
 app_SCRIPTS = desktoptracks
 
 desktoptracks: desktoptracks.py
-	sed -e s!\@datadir\@!$(datadir)/desktoptracks! -e s!\@version\@!$(VERSION)! < $< > $@
+	sed \
+	-e s!\@datadir\@!$(datadir)/desktoptracks! \
+	-e s!\@bindir\@!$(bindir)! \
+	-e s!\@version\@!$(VERSION)! \
+	< $< > $@
 
 
 gladedir = $(datadir)/desktoptracks

@@ -47,6 +47,7 @@ gchar* stats_file = NULL;
 const char* window_blacklist[16] = {
 	"desktop_window", /* nautilus */
 	"desktoptracks",  /* our frontend */
+	"desktoptracksd",  /* our daemon */
 	NULL };
 
 

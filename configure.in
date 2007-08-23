@@ -1,7 +1,7 @@
 ENV_CFLAGS=$CFLAGS
 
 AC_PREREQ(2.59)
-AC_INIT([desktoptracksd], 0.1.0, [kassoulet@gmail.com], desktoptracksd)
+AC_INIT([desktoptracks], 0.1.0, [kassoulet@gmail.com], desktoptracks)
 AC_CONFIG_SRCDIR([daemon/desktoptracksd.c])
 AC_LANG(C)
 AM_CONFIG_HEADER(config.h)
@@ -22,6 +22,8 @@ AC_SUBST(DBUS_BINDING_TOOL)
 
 PKG_CHECK_MODULES([DBUSGLIB], [dbus-glib-1 >= 0.73])
 PKG_CHECK_MODULES([X11], [x11])
+PKG_CHECK_MODULES([GTK], [gtk+-2.0 >= 2.10])
+
 
 CFLAGS="${CFLAGS} -Wall"
 
