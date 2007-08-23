@@ -20,6 +20,7 @@
 NAME="DesktopTracks"
 VERSION="@version@"
 DATADIR="@datadir@"
+BINDIR="@bindir@"
 URL="http://code.google.com/p/desktoptracks/"
 
 import sys, os, inspect
@@ -32,9 +33,10 @@ import gnomecanvas
 
 from gtk import gdk
 from datetime import datetime
-from time import time
+from time import time, sleep
 import math
 from math import cos, sin
+from subprocess import Popen
 
 try:
 	import dbus
@@ -46,7 +48,20 @@ try:
 	bus = dbus.SessionBus()
 except :
 	print "cannot connect to D-Bus."
-	sys.exit(1)
+	sys.exit(2)
+
+daemon = None
+retries = 3
+while retries:
+	try:
+		daemon = bus.get_object('org.kassoulet.DesktopTracks', '/org/kassoulet/DesktopTracks')
+		retries = None
+	except dbus.DBusException:
+		print("trying to start DesktopTracks D-Bus daemon...")
+		gobject.spawn_async([BINDIR + "/desktoptracksd"])
+		retries -= 1
+		sleep(1)
+		
 
 #Tango colors taken from 
 #http://tango.freedesktop.org/Tango_Icon_Theme_Guidelines
@@ -247,14 +262,6 @@ class PieChart(gtk.DrawingArea):
 		y = rect.y + rect.height / 2.0
 		radius = min(rect.width / 2.0, rect.height / 2.0) - 8
 
-		# clock back
-
-
-		# clock hands
-		#hours = self.time.hour
-		#minutes = self.time.minute + self._minute_offset
-		#seconds = self.time.second + self.time.microsecond / 1000000.0
-
 		s = self.values
 		a = -25.0
 		c = 0
@@ -301,7 +308,6 @@ class PieChart(gtk.DrawingArea):
 			c += 1
 			
 			
-
 		context.arc(x, y, radius, 0, 2.0 * math.pi)
 		context.set_source_rgba(1,1,1,0.5)
 		context.set_line_width(2)
@@ -393,17 +399,14 @@ class PieChart(gtk.DrawingArea):
 
 class DesktopTracksWindow:
 
-	def __init__(self):
+	def __init__(self, daemon=None):
 		self.error = None
 		self.window = None
-		try:
-			self.daemon = bus.get_object('org.kassoulet.DesktopTracks', '/org/kassoulet/DesktopTracks')
-		except dbus.DBusException:
-			self.critical_error("DesktopTracks D-Bus daemon is not responding or not running.")
 		
-
-	def on_menu_about_activate(self,*args):
-		self.about.show()
+		if not daemon:
+			self.critical_error("DesktopTracks D-Bus daemon is not responding or not running.")
+		self.daemon = daemon
+			
 
 	def critical_error(self, msg):
 		self.error = True
@@ -508,10 +511,6 @@ class DesktopTracksWindow:
 		gladefile = os.path.join(DATADIR, "%s.glade" % NAME.lower())
 		self.glade = gtk.glade.XML(gladefile)
 		
-		self.about = self.glade.get_widget("dialog_about")
-		self.about.set_property("name", NAME)
-		self.about.set_property("version", VERSION)
-
 		self.window = self.glade.get_widget("window_main")
 		self.applist = self.glade.get_widget("treeview")
 		self.notebook = self.glade.get_widget("notebook")
@@ -543,7 +542,7 @@ class DesktopTracksWindow:
 		self.update_stats()
 		
 
-w = DesktopTracksWindow()
+w = DesktopTracksWindow(daemon)
 w.show()
 
 gtk.main()
