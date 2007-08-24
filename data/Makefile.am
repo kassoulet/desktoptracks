@@ -12,6 +12,8 @@ dist_icon_DATA = desktoptracks.png
 svgicondir = $(datadir)/icons/hicolor/scalable/apps
 dist_svgicon_DATA = desktoptracks.svg
 
+gladedir = $(datadir)/desktoptracks
+dist_glade_DATA = desktoptracks.glade 
 
 gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
 

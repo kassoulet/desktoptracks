@@ -227,14 +227,7 @@ gboolean desktoptracks_clear_stats(DesktopTracks *obj, GError **error)
 	return TRUE;
 }
 
-gint sort_stats(const AppStats* s1, const AppStats* s2)
-{
-	if (s1->app_time > s2->app_time)
-		return 1;
-	if (s1->app_time < s2->app_time)
-		return -1;
-	return 0;
-}
+
 
 gboolean update(gpointer data)
 {
@@ -252,9 +245,7 @@ gboolean update(gpointer data)
 	guint i, len;
 	GString *tooltip;
 	
-	tooltip = g_string_new("DesktopTracks\n");
-	
-	g_array_sort(appstats, sort_stats);
+	tooltip = g_string_new("");
 	
 	const guint max = 8;
 	guint total = 0, others = 0;
@@ -264,9 +255,6 @@ gboolean update(gpointer data)
 		stats = g_array_index(appstats, AppStats*, i);
 		
 		total += stats->app_time;
-		if (i > max) {
-			others += stats->app_time;
-		}
 	}
 	
 	len = MIN(max, appstats->len);
@@ -274,10 +262,13 @@ gboolean update(gpointer data)
 	for(i = 0; i < len; i++) {
 		AppStats *stats;
 		stats = g_array_index(appstats, AppStats*, i);
-		g_string_append_printf(tooltip, "\n%s (%d%%) %d", stats->app_name->str,
-			100 * stats->app_time / total, stats->app_time);
+		g_string_append_printf(tooltip, "%s: %.0f%%\n", stats->app_name->str,
+			100.0f * stats->app_time / total);
+			
+		others += stats->app_time;
 	}
-	g_string_append_printf(tooltip, "\nothers: %d%%", 100 * others / total);
+	others = total - others;
+	g_string_append_printf(tooltip, "others: %.0f%%", 100.0f * others / total);
 
 	gtk_status_icon_set_tooltip(status_icon, tooltip->str);
 

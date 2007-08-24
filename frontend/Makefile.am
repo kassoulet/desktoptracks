@@ -11,8 +11,7 @@ desktoptracks: desktoptracks.py
 	< $< > $@
 
 
-gladedir = $(datadir)/desktoptracks
-dist_glade_DATA = desktoptracks.glade 
+
 
 
 EXTRA_DIST = desktoptracks.py

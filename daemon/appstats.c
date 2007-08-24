@@ -288,6 +288,18 @@ void appstats_free(GArray* appstats)
 	g_array_free(appstats, TRUE);
 }
 
+gint cb_sort_stats(gconstpointer  a, gconstpointer b)
+{
+	const AppStats* s1 = *((AppStats**)a);
+	const AppStats* s2 = *((AppStats**)b);
+
+	if (s1->app_time > s2->app_time)
+		return -1;
+	if (s1->app_time < s2->app_time)
+		return 1;
+	return 0;
+}
+
 GArray* stats_get_apps()
 {
 	GArray* array;
@@ -296,27 +308,27 @@ GArray* stats_get_apps()
 	gchar** apps, **_apps;
 	GError* error;
 	
-	array = g_array_new(TRUE, TRUE, sizeof (GString*));
+	array = g_array_new(TRUE, TRUE, sizeof (AppStats*));
 	
 	gsize app_count;
 	apps = _apps = g_key_file_get_keys(keyfile, "apps", &app_count, NULL);
 	
-	AppStats* stats;
-	
 	if (apps && *apps) {
 
 		while (*apps) {
-		
+			AppStats* stats;
+			
 			stats = g_new0(AppStats, 1);
-		
+
 			stats->app_name = g_string_new(*apps);
 			stats->app_time = stats_get_application_time(*apps);
 			g_array_append_val(array, stats);
-
+			
 			apps++;
 		}
 		g_strfreev(_apps);
 	}
+	g_array_sort(array, cb_sort_stats);
 	
 	return array;
 }

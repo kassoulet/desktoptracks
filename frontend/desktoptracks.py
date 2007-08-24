@@ -424,7 +424,7 @@ class DesktopTracksWindow:
 		self.liststore.clear()
 		r = self.daemon.getAppStats()
 				
-		r.sort(key=lambda x: -x[1])
+		#r.sort(key=lambda x: -x[1])
 		
 		items = []
 		count = 6
