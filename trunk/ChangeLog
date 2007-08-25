@@ -1,3 +1,7 @@
+2007-08-26  Gautier Portet <kassoulet gmail com>
+
+	* daemon: Added Gnome-screensaver in blacklist.
+
 2007-08-23  Gautier Portet <kassoulet gmail com>
 
 	* daemon: Added a status icon. But added GTK as dependency.
