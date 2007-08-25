@@ -5,4 +5,3 @@ DISTCLEANFILES =
 
 release: dist
 	svn -m "release $(VERSION)" copy . https://kassoulet@desktoptracks.googlecode.com/svn/tags/release-$(VERSION) 
-	cp soundconverter-$(VERSION).tar.gz ~/Destop/
