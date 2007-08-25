@@ -48,6 +48,7 @@ const char* window_blacklist[16] = {
 	"desktop_window", /* nautilus */
 	"desktoptracks",  /* our frontend */
 	"desktoptracksd",  /* our daemon */
+	"gnome-screensaver",
 	NULL };
 
 
