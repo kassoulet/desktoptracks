@@ -1,3 +1,7 @@
+2008-02-04  Gautier Portet <kassoulet gmail com>
+
+	* frontend: Fixed slow updates.
+
 2007-08-26  Gautier Portet <kassoulet gmail com>
 
 	* daemon: Added Gnome-screensaver in blacklist.
