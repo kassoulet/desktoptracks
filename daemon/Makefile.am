@@ -4,7 +4,7 @@ INCLUDES = -fPIC @DBUSGLIB_CFLAGS@ @X11_CFLAGS@ @GTK_CFLAGS@ \
 
 bin_PROGRAMS = desktoptracksd
 
-desktoptracksd_SOURCES = desktoptracksd.c appstats.c
+desktoptracksd_SOURCES = desktoptracksd.c appstats.c desktoptracksd.h appstats.h
 
 desktoptracksd_LDADD= @DBUSGLIB_LIBS@ @X11_LIBS@ @GTK_LIBS@
 
