@@ -204,6 +204,12 @@ class PieChart(gtk.DrawingArea):
 						gdk.BUTTON_RELEASE_MASK |
 						gdk.POINTER_MOTION_MASK)
 
+		self._last_redraw = 0
+		self._fps = 0
+		self.items = []
+		self.legends = []
+		self.values = []
+
 		self.update()
 		# update the clock once a second
 		gobject.timeout_add(100, self.update)
@@ -211,10 +217,6 @@ class PieChart(gtk.DrawingArea):
 		self.x = 0
 		self.y = 0
 
-		self._last_redraw = 0
-		self.items = []
-		self.legends = []
-		self.values = []
   
 	def set_items(self, items):
 		
@@ -243,19 +245,17 @@ class PieChart(gtk.DrawingArea):
 		self.x = event.x
 		self.y = event.y
 		
-		now = time()
-		if now > self._last_redraw + 0.02:
-			self._last_redraw = now
-			self.redraw_canvas()
+		#now = time()
+		#if now > self._last_redraw + 0.1:
+		#	self._last_redraw = now
+		self.redraw_canvas()
 
 		if self._dragging:
 			self.emit_time_changed_signal(event.x, event.y)
 
 
-
 	def draw(self, context):
-		#print "draw()"
-
+		self._fps += 1
 		rect = self.get_allocation()
 
 		x = rect.x + rect.width / 2.0
@@ -373,7 +373,7 @@ class PieChart(gtk.DrawingArea):
 		context.set_font_size(48)
 		s = "DesktopTracks"
 		xbearing, ybearing, width, height, xadvance, yadvance = context.text_extents(s)
-		context.move_to(x-width/2, y+radius+40)
+		context.move_to(x-width/2, y+radius+40*0)
 		context.set_source_rgba( 0,0,0 , 0.05)
 		self.a = min(self.a + 0.1, 1.0)
 		context.show_text(s)
@@ -382,19 +382,25 @@ class PieChart(gtk.DrawingArea):
 
 
 	def redraw_canvas(self):
+		now = time()
+		if now > self._last_redraw + 0.1:
+			self._last_redraw = now
+		else:
+			return
+			
 		if self.window:
 			alloc = self.get_allocation()
 			#rect = gdk.Rectangle(alloc.x, alloc.y, alloc.width, alloc.height)
 			#self.window.invalidate_rect(rect, True)
+			
 			self.queue_draw_area(alloc.x, alloc.y, alloc.width, alloc.height)
 			self.window.process_updates(True)
 
 	def update(self):
-		
 		self.redraw_canvas()
-
-
-		return True # keep running this event
+		#print self._fps
+		self._fps = 0
+		return False
 
 
 class DesktopTracksWindow:
