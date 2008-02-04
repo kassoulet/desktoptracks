@@ -1,0 +1,16 @@
+2008-02-04  Gautier Portet <kassoulet gmail com>
+
+	* frontend: Fixed slow updates.
+
+2007-08-26  Gautier Portet <kassoulet gmail com>
+
+	* daemon: Added Gnome-screensaver in blacklist.
+
+2007-08-23  Gautier Portet <kassoulet gmail com>
+
+	* daemon: Added a status icon. But added GTK as dependency.
+	* frontend: Fontend will now start the daemon automatically.
+
+2007-05-11  Gautier Portet <kassoulet gmail com>
+
+	* dbus-daemon: Improved daemon. 
